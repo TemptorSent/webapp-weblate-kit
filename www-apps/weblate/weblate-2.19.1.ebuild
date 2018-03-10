@@ -31,7 +31,7 @@ DEPEND="
 	>=dev-python/py-filelock-3.0.1
 	mercurial? ( >=dev-vcs/mercurial-2.8 )
 	>=dev-python/python-social-auth-1.3.0
-	>=dev-python/django-social-auth-1.2.0
+	>=dev-python/social-app-django-1.2.0
 	>=dev-python/django-appconf-1.0
 	>=dev-python/whoosh-2.7.0
 	dev-python/pillow

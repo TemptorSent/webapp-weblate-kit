@@ -17,6 +17,6 @@ IUSE=""
 
 DEPEND="
 	dev-python/pyyaml
-	dev-python/ua-parser"
+	dev-python/uap-python"
 
 RDEPEND="${DEPEND}"

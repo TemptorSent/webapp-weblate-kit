@@ -17,5 +17,3 @@ IUSE=""
 
 DEPEND="dev-python/pyyaml"
 RDEPEND="${DEPEND}"
-DISTUTILS_IN_SOURCE_BUILD=1
-mydistutilsargs=( --inplace --work-path="${S}" --build-lib="${S}")
