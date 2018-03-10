@@ -3,7 +3,7 @@
 
 EAPI=5
 
-PYTHON_COMPAT=( python2_7 python3_{4,5} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 inherit distutils-r1
 
@@ -23,7 +23,6 @@ RDEPEND="
 	>=dev-python/django-appconf-0.4[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/versiontools[${PYTHON_USEDEP}]
 	test? (
 		dev-python/django[${PYTHON_USEDEP}]
 		dev-python/django-discover-runner[${PYTHON_USEDEP}]

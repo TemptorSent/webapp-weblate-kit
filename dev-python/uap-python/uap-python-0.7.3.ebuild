@@ -15,5 +15,5 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-DEPEND="dev-python/pyyaml"
+DEPEND="dev-python/pyyaml[${PYTHON_USEDEP}]"
 RDEPEND="${DEPEND}"

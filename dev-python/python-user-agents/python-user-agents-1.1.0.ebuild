@@ -16,7 +16,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 DEPEND="
-	dev-python/pyyaml
-	dev-python/uap-python"
+	dev-python/pyyaml[${PYTHON_USEDEP}]
+	dev-python/uap-python[${PYTHON_USEDEP}]"
 
 RDEPEND="${DEPEND}"
