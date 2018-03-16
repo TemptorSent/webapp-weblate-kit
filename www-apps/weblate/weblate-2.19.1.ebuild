@@ -75,11 +75,11 @@ pkg_setup() {
 
 src_install() {
 	webapp_src_preinst
-	distutils-r1_python_install_all --install-lib="${MY_HOSTROOTDIR}/lib" --install-data="${MY_HOSTROOTDIR}" --install-scripts "${MY_HOSTROOTDIR}/bin"
-	distutils-r1_python_install --install-lib="${MY_HOSTROOTDIR}/lib" --install-data="${MY_HOSTROOTDIR}" --install-scripts "${MY_HOSTROOTDIR}/bin"
-	pushd "${D}/${MY_HOSTROOTDIR}/lib/weblate"
-	mv static/* "${D}/${MY_HTDOCSDIR}"
-	rmdir static && ln -s "../../../htdocs" "static"
+	distutils-r1_python_install_all --install-lib="${MY_HOSTROOTDIR}" --install-data="${MY_HOSTROOTDIR}" --install-scripts "bin/${MY_HOSTROOTDIR}"
+	distutils-r1_python_install --install-lib="${MY_HOSTROOTDIR}" --install-data="${MY_HOSTROOTDIR}" --install-scripts "bin/${MY_HOSTROOTDIR}"
+#	pushd "${D}/${MY_HOSTROOTDIR}/lib/weblate"
+#	mv static/* "${D}/${MY_HTDOCSDIR}"
+#	rmdir static && ln -s "../../../htdocs" "static"
 #	insinto "${MY_HTDOCSDIR}"
 #	doins -r .
 #	webapp_serverowned -R "${MY_HTDOCSDIR}"/apps
