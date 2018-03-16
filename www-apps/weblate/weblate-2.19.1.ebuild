@@ -4,7 +4,7 @@
 EAPI=6
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
-
+DISTUTILS_SINGLE_IMPL=1
 MYINHERIT="distutils-r1 eutils versionator webapp"
 DESCRIPTION="Web-based translation management system."
 HOMEPAGE="https://weblate.org"
@@ -72,12 +72,14 @@ pkg_setup() {
 	python_setup
 }
 
-src_install() {
-	
-	webapp_src_preinst
-	distutils-r1_python_install
-	distutils-r1_python_install_all
 
+src_install() {
+	webapp_src_preinst
+	distutils-r1_python_install_all --install-lib="${MY_HOSTROOTDIR}/lib" --install-data="${MY_HOSTROOTDIR}" --install-scripts "${MY_HOSTROOTDIR}/bin"
+	distutils-r1_python_install --install-lib="${MY_HOSTROOTDIR}/lib" --install-data="${MY_HOSTROOTDIR}" --install-scripts "${MY_HOSTROOTDIR}/bin"
+	pushd "${D}/${MY_HOSTROOTDIR}/lib/weblate"
+	mv static/* "${D}/${MY_HTDOCSDIR}"
+	rmdir static && ln -s "../../../htdocs" "static"
 #	insinto "${MY_HTDOCSDIR}"
 #	doins -r .
 #	webapp_serverowned -R "${MY_HTDOCSDIR}"/apps
@@ -85,4 +87,5 @@ src_install() {
 #	webapp_serverowned -R "${MY_HTDOCSDIR}"/config
 #	webapp_configfile "${MY_HTDOCSDIR}"/.htaccess
 	webapp_src_install
+
 }
