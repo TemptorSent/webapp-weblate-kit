@@ -24,7 +24,6 @@ inherit $MYINHERIT
 LICENSE=""
 #SLOT="2.19/2.19.1"
 KEYWORDS="~amd64 ~x86"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 IUSE="mercurial subversion avatar bidi ocr akismet"
 
@@ -70,10 +69,20 @@ S="${WORKDIR}/${MY_P}"
 
 pkg_setup() {
 	webapp_pkg_setup
+	python_setup
 }
 
-
 src_install() {
+	
 	webapp_src_preinst
+	distutils-r1_python_install
+	distutils-r1_python_install_all
+
+#	insinto "${MY_HTDOCSDIR}"
+#	doins -r .
+#	webapp_serverowned -R "${MY_HTDOCSDIR}"/apps
+#	webapp_serverowned -R "${MY_HTDOCSDIR}"/data
+#	webapp_serverowned -R "${MY_HTDOCSDIR}"/config
+#	webapp_configfile "${MY_HTDOCSDIR}"/.htaccess
 	webapp_src_install
 }
