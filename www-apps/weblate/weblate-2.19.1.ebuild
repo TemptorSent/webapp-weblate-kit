@@ -4,7 +4,8 @@
 EAPI=6
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
-DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_IN_SOURCE_BUILD=1
+DISTUTILS_SINGLE_IMLP=1
 MYINHERIT="distutils-r1 eutils versionator webapp"
 DESCRIPTION="Web-based translation management system."
 HOMEPAGE="https://weblate.org"
@@ -72,11 +73,17 @@ pkg_setup() {
 	python_setup
 }
 
+distutils-r1_src_compile() {
+	:
+}
+
+distutils-r1_src_install() {
+	:
+}
 
 src_install() {
 	webapp_src_preinst
-	distutils-r1_python_install_all --install-lib="${MY_HOSTROOTDIR}" --install-data="${MY_HOSTROOTDIR}" --install-scripts "bin/${MY_HOSTROOTDIR}"
-	distutils-r1_python_install --install-lib="${MY_HOSTROOTDIR}" --install-data="${MY_HOSTROOTDIR}" --install-scripts "bin/${MY_HOSTROOTDIR}"
+	cp -r . "${D}/${MY_HOSTROOTDIR}"
 #	pushd "${D}/${MY_HOSTROOTDIR}/lib/weblate"
 #	mv static/* "${D}/${MY_HTDOCSDIR}"
 #	rmdir static && ln -s "../../../htdocs" "static"
