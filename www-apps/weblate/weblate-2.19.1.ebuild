@@ -90,7 +90,10 @@ src_install() {
 #	insinto "${MY_HTDOCSDIR}"
 #	doins -r .
 #	webapp_serverowned -R "${MY_HTDOCSDIR}"/apps
-#	webapp_serverowned -R "${MY_HTDOCSDIR}"/data
+	dodir "${MY_HTROOTDIR}"/data
+	webapp_serverowned -R "${MY_HTROOTDIR}"/data
+	dodir "${MY_HTROOTDIR}"/socket
+	webapp_serverowned -R "${MY_HTROOTDIR}"/socket
 #	webapp_serverowned -R "${MY_HTDOCSDIR}"/config
 #	webapp_configfile "${MY_HTDOCSDIR}"/.htaccess
 	webapp_src_install
