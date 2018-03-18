@@ -7,7 +7,7 @@ PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 DISTUTILS_IN_SOURCE_BUILD=1
 DISTUTILS_SINGLE_IMLP=1
 
-inherit python-single-r1 webapp
+inherit distutils-r1 webapp
 
 DESCRIPTION="Web-based translation management system."
 HOMEPAGE="https://weblate.org"
