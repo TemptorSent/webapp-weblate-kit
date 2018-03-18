@@ -105,7 +105,7 @@ src_install() {
 
 	# Set up log directory
 	local WEBLATE_LOGDIR="${MY_HOSTROOTDIR}/logs/${PN}"
-	dodir "${WEBLATE_LOGDIR}" && touch "${D}/${WEBLATE_LOGDIR}/${PN}.uwsgi.log" || die "Failed to create empty log!"
+	dodir "${WEBLATE_LOGDIR}"
 	webapp_serverowned -R "${WEBLATE_LOGDIR}"
 
 	webapp_hook_script "${FILESDIR}/webapp-config.${PN}.hook"

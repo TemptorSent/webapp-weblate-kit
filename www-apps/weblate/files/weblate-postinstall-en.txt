@@ -22,11 +22,13 @@
 		rm -f ${ROOT}etc/init.d/uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/}
 		ln -s uwsgi ${ROOT}etc/init.d/uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/}
 		rm -f ${ROOT}etc/conf.d/uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/}
-		ln -s ${VHOST_ROOT}/conf/${VHOST_APPDIR#/}/weblate.conf.d ${ROOT}etc/conf.d/uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/}
+		ln -s ${VHOST_ROOT}/conf/${VHOST_APPDIR#/}/conf.d.uwsgi.weblate ${ROOT}etc/conf.d/uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/}
 
-	# Setup nginx config link for sites-available/${VHOST_HOSTNAME}.${VHOST_APPDIR#/}.conf
+	# Setup nginx config link for sites-available/${VHOST_HOSTNAME}.${VHOST_APPDIR#/}.conf -> sites-enabled
 		rm -f ${ROOT}etc/nginx/sites-available/${VHOST_HOSTNAME}.${VHOST_APPDIR#/}.conf
 		ln -s ${VHOST_ROOT}/conf/${VHOST_APPDIR#/}/weblate.nginx.conf ${ROOT}etc/nginx/sites-available/${VHOST_HOSTNAME}.${VHOST_APPDIR#/}.conf
+		rm -f ${ROOT}etc/nginx/sites-enabled/${VHOST_HOSTNAME}.${VHOST_APPDIR#/}.conf
+		ln -s ../sites-available/${VHOST_HOSTNAME}.${VHOST_APPDIR#/}.conf ${ROOT}etc/nginx/sites-enabled/
 
 	# Add service to default runlevel
 		rc-update add uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/} default
