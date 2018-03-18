@@ -1,0 +1,54 @@
+#!/bin/bash
+
+die() {
+	printf "\n#####\n%s\n#####\n" "$1"
+	exit 1
+}
+
+_webapp_config_weblate_install_hook() {
+
+	# Define our variables to replace:
+	WEBLATE_APPNAME="${VHOST_APPDIR#/}"
+	WEBLATE_USER="${VHOST_SERVER_UID}"
+	WEBLATE_GROUP="${VHOST_SERVER_GID}"
+
+	WEBLATE_ROOT="${VHOST_ROOT}/${WEBLATE_APPNAME}"
+	WEBLATE_CONF="${VHOST_ROOT}/conf/${WEBLATE_APPNAME}"
+	WEBLATE_LOGDIR="${VHOST_ROOT}/logs/${WEBLATE_APPNAME}"
+	WEBLATE_SOCKET="${VHOST_ROOT}/sockets/${WEBLATE_APPNAME}.uwsgi.sock"
+
+	WEBLATE_PYTHON_ROOT="$WEBLATE_ROOT/weblate"
+	WEBLATE_STATIC="$WEBLATE_ROOT/static"
+	WEBLATE_MEDIA="$WEBLATE_ROOT/media"
+
+
+	WEBLATE_DB_NAME="${WEBLATE_APPNAME}"
+	WEBLATE_DB_USER="${WEBLATE_APPNAME}"
+	WEBLATE_DB_PASSWORD="${WEBLATE_APPNAME}"
+	WEBLATE_DB_HOST=""
+	WEBLATE_DB_PORT=""
+	WEBLATE_ALLOWED_HOSTS="'${VHOST_HOSTNAME}'"
+
+	# Replace all tokens with values of the variable by the same name.
+	local myvar
+	for myvar in ${!WEBLATE*} ; do
+		sed -e "s|${myvar}|${!myvar}|g" -i "${WEBLATE_CONF}"/*
+	done
+
+	# Fix up example.com domain entries.
+	sed -e "s|example.com|${VHOST_HOSTNAME}|g" -i "${WEBLATE_CONF}"/*
+
+	# Setup links to settings
+	ln -s "../../conf/${WEBLATE_APPNAME}/settings.py" "${WEBLATE_PYTHON_ROOT}/settings.py"
+
+}
+
+_webapp_config_weblate_clean_hook() {
+	echo "$1"
+}
+
+case "$1" in
+	install) _webapp_config_weblate_install_hook ;;
+	clean) _webapp_config_weblate_clean_hook ;;
+	*) die "$0 called with unknown command '$1'!" ;;
+esac

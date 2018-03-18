@@ -23,13 +23,13 @@ fi
 inherit $MYINHERIT
 
 LICENSE=""
-#SLOT="2.19/2.19.1"
 KEYWORDS="~amd64 ~x86"
 
 IUSE="mercurial subversion avatar bidi ocr akismet"
 
 DEPEND="
 	${PYTHON_DEPS}
+	dev-python/psycopg:2[${PYTHON_USEDEP}]
 	>=dev-python/django-1.11[${PYTHON_USEDEP}]
 	>=dev-python/siphashc-0.8[${PYTHON_USEDEP}]
 	>=dev-python/translate-toolkit-2.2.0[${PYTHON_USEDEP}]
@@ -65,6 +65,8 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+
 S="${WORKDIR}/${MY_P}"
 
 
@@ -82,20 +84,44 @@ distutils-r1_src_install() {
 }
 
 src_install() {
+	# webapp install pre
 	webapp_src_preinst
-	cp -r . "${D}/${MY_HOSTROOTDIR}"
-#	pushd "${D}/${MY_HOSTROOTDIR}/lib/weblate"
-#	mv static/* "${D}/${MY_HTDOCSDIR}"
-#	rmdir static && ln -s "../../../htdocs" "static"
-#	insinto "${MY_HTDOCSDIR}"
-#	doins -r .
-#	webapp_serverowned -R "${MY_HTDOCSDIR}"/apps
-	dodir "${MY_HTROOTDIR}"/data
-	webapp_serverowned -R "${MY_HTROOTDIR}"/data
-	dodir "${MY_HTROOTDIR}"/socket
-	webapp_serverowned -R "${MY_HTROOTDIR}"/socket
-#	webapp_serverowned -R "${MY_HTDOCSDIR}"/config
-#	webapp_configfile "${MY_HTDOCSDIR}"/.htaccess
-	webapp_src_install
 
+	# Copy everything to the HOSTROOTDIR/MY_PN
+
+	local WEBLATE_ROOT="${MY_HOSTROOTDIR}/${PN}"
+	dodir "${WEBLATE_ROOT}"
+	cp -r . "${D}/${WEBLATE_ROOT}"
+
+	# Copy configuration templates to HOSTROOTDIR/conf
+	local WEBLATE_CONF="${MY_HOSTROOTDIR}/conf/${PN}"
+	dodir "${WEBLATE_CONF}"
+	cp "${FILESDIR}/conf/"/* "${D}/${WEBLATE_CONF}"
+
+	# Fix up python module for uWSGI
+	sed -e 's/WEBLATE_PYTHON_MODULE/'"${EPYTHON/./}"'/g' -i "${D}/${WEBLATE_CONF}"/*
+
+	# Create data and media directories an set ownership to server.
+	dodir "${WEBLATE_ROOT}"/data
+	webapp_serverowned -R "${WEBLATE_ROOT}"/data
+	dodir "${WEBLATE_ROOT}"/media
+	webapp_serverowned -R "${WEBLATE_ROOT}"/media
+
+	ln -s "weblate/static" "${D}/${WEBLATE_ROOT}/static"
+
+	# Set up sockets directory
+	dodir "${MY_HOSTROOTDIR}"/sockets
+	webapp_serverowned -R "${MY_HOSTROOTDIR}"/sockets
+
+	# Set up log directory
+	local WEBLATE_LOGDIR="${MY_HOSTROOTDIR}/logs/${PN}"
+	dodir "${WEBLATE_LOGDIR}"
+	touch "${D}/${WEBLATE_LOGDIR}/${PN}.uwsgi.log"
+	webapp_serverowned -R "${WEBLATE_LOGDIR}"
+
+	webapp_hook_script "${FILESDIR}/webapp-config.${PN}.hook"
+	webapp_postinst_txt en "${FILESDIR}/weblate-postinstall-en.txt"
+
+	# webapp install post
+	webapp_src_install
 }

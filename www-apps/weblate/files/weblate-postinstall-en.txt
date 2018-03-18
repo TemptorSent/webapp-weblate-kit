@@ -1,0 +1,37 @@
+
+	* Create postgresql user and database for ${VHOST_APPDIR#/}
+		su - postgres
+			createuser -P ${VHOST_APPDIR#/}
+			createdb -E UTF-8 -O ${VHOST_APPDIR#/} ${VHOST_APPDIR#/} "Weblate Database"
+
+	* Modify ${VHOST_ROOT}/conf/${VHOST_APPDIR#/}/settings.py
+		* Disable DEBUG for production use.
+		* Update ADMINS with your informatoion.
+		* Modify database parameters as needed.
+		* Add comma separated entries to ALLOWED_HOSTS for each host this instance should answer for.
+		* RTFM and make any other adjusments needed.
+
+	* Setup database structure and create an admin user
+		su - ${VHOST_SERVER_UID}
+			cd ${VHOST_ROOT}/${VHOST_APPDIR#/}
+			${EPYTHON} manage.py migrate
+			${EPYTHON} manage.py createadmin --name "NAME" --email "EMAIL" --username "USERNAME" --password "PASSWORD"
+
+
+	# Setup init.d and conf.d uWSGI service links for uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/}
+		rm -f ${ROOT}etc/init.d/uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/}
+		ln -s uwsgi ${ROOT}etc/init.d/uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/}
+		rm -f ${ROOT}etc/conf.d/uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/}
+		ln -s ${VHOST_ROOT}/conf/${VHOST_APPDIR#/}/weblate.conf.d ${ROOT}etc/conf.d/uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/}
+
+	# Setup nginx config link for sites-available/${VHOST_HOSTNAME}.${VHOST_APPDIR#/}.conf
+		rm -f ${ROOT}etc/nginx/sites-available/${VHOST_HOSTNAME}.${VHOST_APPDIR#/}.conf
+		ln -s ${VHOST_ROOT}/conf/${VHOST_APPDIR#/}/weblate.nginx.conf ${ROOT}etc/nginx/sites-available/${VHOST_HOSTNAME}.${VHOST_APPDIR#/}.conf
+
+	# Add service to default runlevel
+		rc-update add uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/} default
+
+	# Start/restart services
+		/etc/init.d/uwsgi.${VHOST_HOSTNAME}.${VHOST_APPDIR#/} start
+		/etc/init.d/nginx restart
+
