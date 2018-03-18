@@ -6,7 +6,9 @@ EAPI=6
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 DISTUTILS_IN_SOURCE_BUILD=1
 DISTUTILS_SINGLE_IMLP=1
-MYINHERIT="distutils-r1 eutils versionator webapp"
+
+inherit python-single-r1 webapp
+
 DESCRIPTION="Web-based translation management system."
 HOMEPAGE="https://weblate.org"
 
@@ -14,13 +16,11 @@ MY_PN="Weblate"
 MY_P="$MY_PN-${PV}"
 
 if [ "${PV}" = "9999" ]  ; then
-	MYINHERIT+=" git-r3"
+	inherit git-r3
 	EGIT_URI="https://github.com/WeblateOrg/weblate.git"
 else
 	SRC_URI="https://dl.cihar.com/${PN}/${MY_P}.tar.xz"
 fi
-
-inherit $MYINHERIT
 
 LICENSE=""
 KEYWORDS="~amd64 ~x86"
@@ -75,14 +75,6 @@ pkg_setup() {
 	python_setup
 }
 
-distutils-r1_src_compile() {
-	:
-}
-
-distutils-r1_src_install() {
-	:
-}
-
 src_install() {
 	# webapp install pre
 	webapp_src_preinst
@@ -90,16 +82,14 @@ src_install() {
 	# Copy everything to the HOSTROOTDIR/MY_PN
 
 	local WEBLATE_ROOT="${MY_HOSTROOTDIR}/${PN}"
-	dodir "${WEBLATE_ROOT}"
-	cp -r . "${D}/${WEBLATE_ROOT}"
+	dodir "${WEBLATE_ROOT}" && cp -r . "${D}/${WEBLATE_ROOT}" || die "Failed to copy source files!"
 
 	# Copy configuration templates to HOSTROOTDIR/conf
 	local WEBLATE_CONF="${MY_HOSTROOTDIR}/conf/${PN}"
-	dodir "${WEBLATE_CONF}"
-	cp "${FILESDIR}/conf/"/* "${D}/${WEBLATE_CONF}"
+	dodir "${WEBLATE_CONF}" && cp "${FILESDIR}/conf/"/* "${D}/${WEBLATE_CONF}" || die "Failed to copy conf templates!"
 
 	# Fix up python module for uWSGI
-	sed -e 's/WEBLATE_PYTHON_MODULE/'"${EPYTHON/./}"'/g' -i "${D}/${WEBLATE_CONF}"/*
+	sed -e 's/WEBLATE_PYTHON_MODULE/'"${EPYTHON/./}"'/g' -i "${D}/${WEBLATE_CONF}"/* || die "Failed to fix uWSGI python module!."
 
 	# Create data and media directories an set ownership to server.
 	dodir "${WEBLATE_ROOT}"/data
@@ -107,7 +97,7 @@ src_install() {
 	dodir "${WEBLATE_ROOT}"/media
 	webapp_serverowned -R "${WEBLATE_ROOT}"/media
 
-	ln -s "weblate/static" "${D}/${WEBLATE_ROOT}/static"
+	ln -s "weblate/static" "${D}/${WEBLATE_ROOT}/static" || die "Failed to symlink static content!"
 
 	# Set up sockets directory
 	dodir "${MY_HOSTROOTDIR}"/sockets
@@ -115,8 +105,7 @@ src_install() {
 
 	# Set up log directory
 	local WEBLATE_LOGDIR="${MY_HOSTROOTDIR}/logs/${PN}"
-	dodir "${WEBLATE_LOGDIR}"
-	touch "${D}/${WEBLATE_LOGDIR}/${PN}.uwsgi.log"
+	dodir "${WEBLATE_LOGDIR}" && touch "${D}/${WEBLATE_LOGDIR}/${PN}.uwsgi.log" || die "Failed to create empty log!"
 	webapp_serverowned -R "${WEBLATE_LOGDIR}"
 
 	webapp_hook_script "${FILESDIR}/webapp-config.${PN}.hook"
