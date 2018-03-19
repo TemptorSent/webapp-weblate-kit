@@ -40,7 +40,7 @@ RDEPEND="${COMMON_DEPEND}
 	ical? ( >=dev-python/vobject-0.9.5[${PYTHON_USEDEP}] )
 	ini? ( >=dev-python/iniparse-0.4[${PYTHON_USEDEP}] )
 	php? ( >=dev-python/phply-1.2.4[${PYTHON_USEDEP}] )
-	subtitles? ( $(python_gen_cond_dep 'media-video/gaupol[${PYTHON_USEDEP}]' 'python3*') )
+	subtitles? ( $(python_gen_cond_dep 'dev-python/aeidon[${PYTHON_USEDEP}]' 'python3*') )
 	yaml? ( >=dev-python/pyyaml-3.12[${PYTHON_USEDEP}] )
 "
 
