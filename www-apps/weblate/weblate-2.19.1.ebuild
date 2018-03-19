@@ -5,7 +5,7 @@ EAPI=6
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 DISTUTILS_IN_SOURCE_BUILD=1
-DISTUTILS_SINGLE_IMLP=1
+DISTUTILS_SINGLE_IMPL=1
 
 inherit distutils-r1 webapp
 
