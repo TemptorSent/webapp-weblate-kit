@@ -54,12 +54,13 @@ python_prepare_all() {
 	sed -e "/^    'sphinx.ext.intersphinx',/d" \
 		-e "/html_theme/ s/sphinx-bootstrap/classic/" \
 		-i docs/conf.py || die
-	if ! use html ; then sed -e "/('html2po'/ d ; /('po2html'/ d" -i setup.py || die ; fi
-	if ! use ical ; then sed -e "/('ical2po'/ d ; /('po2ical'/ d"  -i setup.py || die ; fi
-	if ! use ini ; then sed -e "/('ini2po'/ d ; /('po2ini'/ d"  -i setup.py || die ; fi
-	if ! use php ; then sed -e "/('php2po'/ d ; /('po2php'/ d ; /('phppo2pypo'/ d ; /('pypo2phppo'/ d"  -i setup.py || die ; fi
-	if ! use subtitles ; then sed -e "/('sub2po'/ d ; /('po2sub'/ d"  -i setup.py || die ; fi
-	if ! use yaml ; then sed -e "/('yaml2po'/ d ; /('po2yaml'/ d"  -i setup.py || die ; fi
+	# Opt-out of things we don't want to build.
+	if ! use html ; then sed -e "/('html2po',/ d ; /('po2html',/ d" -i setup.py || die ; fi
+	if ! use ical ; then sed -e "/('ical2po',/ d ; /('po2ical',/ d"  -i setup.py || die ; fi
+	if ! use ini ; then sed -e "/('ini2po',/ d ; /('po2ini',/ d"  -i setup.py || die ; fi
+	if ! use php ; then sed -e "/('php2po',/ d ; /('po2php',/ d ; /('phppo2pypo',/ d ; /('pypo2phppo',/ d"  -i setup.py || die ; fi
+	if ! use subtitles ; then sed -e "/('sub2po',/ d ; /('po2sub',/ d"  -i setup.py || die ; fi
+	if ! use yaml ; then sed -e "/('yaml2po',/ d ; /('po2yaml',/ d"  -i setup.py || die ; fi
 	distutils-r1_python_prepare_all
 }
 
