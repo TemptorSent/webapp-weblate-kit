@@ -84,12 +84,12 @@ src_install() {
 	local WEBLATE_ROOT="${MY_HOSTROOTDIR}/${PN}"
 	dodir "${WEBLATE_ROOT}" && cp -r . "${D}/${WEBLATE_ROOT}" || die "Failed to copy source files!"
 
-	# Copy configuration templates to HOSTROOTDIR/conf
+	# Copy configuration templates to HOSTROOTDIR/conf and mark them as config files.
 	local WEBLATE_CONF="${MY_HOSTROOTDIR}/conf/${PN}"
-	dodir "${WEBLATE_CONF}" && cp "${FILESDIR}/conf/"/* "${D}/${WEBLATE_CONF}" || die "Failed to copy conf templates!"
+	dodir "${WEBLATE_CONF}/default" && cp "${FILESDIR}/conf/"/* "${D}/${WEBLATE_CONF}/default" || die "Failed to copy conf templates!"
 
 	# Fix up python module for uWSGI
-	sed -e 's/WEBLATE_PYTHON_MODULE/'"${EPYTHON/./}"'/g' -i "${D}/${WEBLATE_CONF}"/* || die "Failed to fix uWSGI python module!."
+	sed -e 's/WEBLATE_PYTHON_MODULE/'"${EPYTHON/./}"'/g' -i "${D}/${WEBLATE_CONF}/default"/* || die "Failed to fix uWSGI python module name!."
 
 	# Create data and media directories an set ownership to server.
 	dodir "${WEBLATE_ROOT}"/data
