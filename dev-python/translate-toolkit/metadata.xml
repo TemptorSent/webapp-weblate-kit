@@ -9,6 +9,7 @@
 		<flag name="html">Support conversion between po and html files</flag>
 		<flag name="ical">Support conversion between po and ical files</flag>
 		<flag name="ini">Support conversion between po and ini files</flag>
+		<flag name="php">Support php file conversion to/from po and pypo using phply</flag>
 		<flag name="subtitles">Support conversion between po and sub files</flag>
 		<flag name="yaml">Support YAML format</flag>
 	</use>
