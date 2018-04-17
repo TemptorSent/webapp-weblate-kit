@@ -1,5 +1,3 @@
-# Copyright 1999-2018 Gentoo Foundation
-# Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
@@ -12,7 +10,7 @@ SRC_URI="https://bitbucket.org/flyingcircus/pycountry/get/${PV}.tar.bz2 -> ${P}.
 
 LICENSE="LGPLv2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="*"
 IUSE=""
 
 DEPEND=""

@@ -1,5 +1,3 @@
-# Copyright 1999-2017 Gentoo Foundation
-# Distributed under the terms of the GNU General Public License v2
 
 EAPI=5
 
@@ -12,7 +10,7 @@ MY_PN="${PN/-/_}"
 DESCRIPTION="Compresses linked and inline javascript or CSS into a single cached file"
 HOMEPAGE="https://github.com/django-compressor/django-compressor"
 SRC_URI="https://github.com/jezdez/django_compressor/archive/${PV}.tar.gz -> ${P}.tar.gz"
-KEYWORDS="amd64 ~x86"
+KEYWORDS="*"
 IUSE="doc test"
 
 LICENSE="MIT"
