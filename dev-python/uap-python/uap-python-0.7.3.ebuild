@@ -27,7 +27,8 @@ src_unpack() {
 }
 
 src_prepare() {
-	_fix_setup_nogit
+	# Skip .git dir check
+	sed -e '55,80 { /if not os.path.exists(os.path.join(work_path/,/check_output(.*update.*/ d }' -i setup.py
 	default
 }
 
@@ -35,28 +36,3 @@ src_compile() {
 	esetup.py build_regexes --inplace
 	default
 }
-
-_fix_setup_nogit() {
-	pushd "${WORKDIR}/${P}"
-	patch -p0 <<EOF
-*** setup.py.orig	2018-03-16 23:14:03.578212293 -0000
---- setup.py	2018-03-16 23:16:15.442212060 -0000
-***************
-*** 58,69 ****
-  
-      def run(self):
-          work_path = self.work_path
--         if not os.path.exists(os.path.join(work_path, '.git')):
--             return
-- 
--         log.info('initializing git submodules')
--         check_output(['git', 'submodule', 'init'], cwd=work_path)
--         check_output(['git', 'submodule', 'update'], cwd=work_path)
-  
-          yaml_src = os.path.join(work_path, 'uap-core', 'regexes.yaml')
-          if not os.path.exists(yaml_src):
---- 58,63 ----
-EOF
-	popd
-}
-
