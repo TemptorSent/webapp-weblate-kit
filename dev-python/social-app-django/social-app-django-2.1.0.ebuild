@@ -15,7 +15,7 @@ KEYWORDS="*"
 IUSE="doc examples test"
 
 RDEPEND="
-	>=dev-python/python-social-auth-1.2.0[${PYTHON_USEDEP}]
+	>=dev-python/social-auth-core-1.2.0[${PYTHON_USEDEP}]
 	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
 "
 DEPEND="${DEPEND}
