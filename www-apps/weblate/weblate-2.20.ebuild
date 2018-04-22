@@ -1,3 +1,4 @@
+# Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
@@ -23,47 +24,63 @@ fi
 LICENSE=""
 KEYWORDS="*"
 
-IUSE="mercurial subversion avatar bidi ocr akismet"
+IUSE="mercurial subversion avatar bidi ocr akismet php memcached doc"
 
 DEPEND="
 	${PYTHON_DEPS}
-	dev-python/psycopg:2[${PYTHON_USEDEP}]
-	>=dev-python/django-1.11[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '=dev-python/django-1*[${PYTHON_USEDEP}]' 'python2*')
+	$(python_gen_cond_dep '>=dev-python/django-1.11[${PYTHON_USEDEP}]' 'python3*')
 	>=dev-python/siphashc-0.8[${PYTHON_USEDEP}]
-	>=dev-python/translate-toolkit-2.2.0[${PYTHON_USEDEP}]
-	>=dev-python/six-1.7.0[${PYTHON_USEDEP}]
-	>=dev-python/py-filelock-3.0.1[${PYTHON_USEDEP}]
-	mercurial? ( >=dev-vcs/mercurial-2.8 )
-	>=dev-python/python-social-auth-1.3.0[${PYTHON_USEDEP}]
-	>=dev-python/social-app-django-1.2.0[${PYTHON_USEDEP}]
-	>=dev-python/django-appconf-1.0[${PYTHON_USEDEP}]
 	>=dev-python/whoosh-2.7.0[${PYTHON_USEDEP}]
-	dev-python/pillow[${PYTHON_USEDEP}]
+	>=dev-python/translate-toolkit-2.3.0[${PYTHON_USEDEP}]
 	>=dev-python/lxml-3.1.0[${PYTHON_USEDEP}]
-	>=dev-python/pyyaml-3.0[${PYTHON_USEDEP}]
-	>=dev-python/defusedxml-0.4[${PYTHON_USEDEP}]
+	dev-python/pillow[${PYTHON_USEDEP}]
+	>=dev-python/six-1.7.0[${PYTHON_USEDEP}]
 	dev-python/python-dateutil[${PYTHON_USEDEP}]
-	>=dev-python/django-compressor-2.1.1[${PYTHON_USEDEP}]
+	>=dev-python/social-auth-core-1.3.0[${PYTHON_USEDEP}]
+	>=dev-python/social-app-django-1.2.0[${PYTHON_USEDEP}]
 	>=dev-python/django-crispy-forms-1.6.1[${PYTHON_USEDEP}]
-	>=dev-python/django-rest-framework-3.7[${PYTHON_USEDEP}]
+	>=dev-python/oauthlib-0.6.3[${PYTHON_USEDEP}]
+	>=dev-python/django-compressor-2.1.1[${PYTHON_USEDEP}]
+	>=dev-python/django-rest-framework-3.8[${PYTHON_USEDEP}]
+	>=dev-python/defusedxml-0.4[${PYTHON_USEDEP}]
+	>=dev-python/django-appconf-1.0[${PYTHON_USEDEP}]
 	>=dev-python/python-user-agents-1.1.0[${PYTHON_USEDEP}]
-	avatar? ( dev-python/pylibravatar[${PYTHON_USEDEP}] )
+	>=dev-python/py-filelock-3.0.1[${PYTHON_USEDEP}]
+
 	>=dev-python/pyuca-1.1[${PYTHON_USEDEP}]
-	dev-python/Babel[${PYTHON_USEDEP}]
+	avatar? ( dev-python/pylibravatar[${PYTHON_USEDEP}] )
+	$(python_gen_cond_dep 'dev-python/pydns:2[${PYTHON_USEDEP}]' 'python2*')
+	$(python_gen_cond_dep 'dev-python/pydns:3[${PYTHON_USEDEP}]' 'python3*')
 	dev-python/pytz[${PYTHON_USEDEP}]
-	bidi? ( dev-python/python-bidi[${PYTHON_USEDEP}] )
+	dev-python/Babel[${PYTHON_USEDEP}]
+	php? ( dev-python/phply[${PYTHON_USEDEP}] )
+	dev-python/chardet[${PYTHON_USEDEP}]
+	mercurial? ( >=dev-vcs/mercurial-2.8[$(python_gen_usedep 'python2*')] )
+	memcached? ( dev-python/python-memcached[${PYTHON_USEDEP}] )
+	bidi? ( >=dev-python/python-bidi-0.4.0[${PYTHON_USEDEP}] )
+	>=dev-python/pyyaml-3.0[${PYTHON_USEDEP}]
 	ocr? (
 		app-text/tesseract
 		>=dev-python/tesserocr-2.0.0[${PYTHON_USEDEP}]
 	)
 	akismet? ( >=dev-python/akismet-1.0[${PYTHON_USEDEP}] )
+	dev-python/python-levenshtein[${PYTHON_USEDEP}]
+
+	dev-python/psycopg:2[${PYTHON_USEDEP}]
+
 	>=dev-vcs/git-1.6[subversion?]
 	dev-vcs/hub
 	dev-python/git-review[${PYTHON_USEDEP}]
+
+	doc? (
+		dev-python/sphinxcontrib-httpdomain
+		dev-python/pygments
+	)
 "
 RDEPEND="${DEPEND}"
 
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+REQUIRED_USE="${PYTHON_REQUIRED_USE} mercurial? ( || ( $(python_gen_useflags 'python2*') ) )"
 
 S="${WORKDIR}/${MY_P}"
 

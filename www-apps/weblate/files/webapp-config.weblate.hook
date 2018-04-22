@@ -36,7 +36,28 @@ _webapp_config_weblate_install_hook() {
 	done
 
 	# Fix up example.com domain entries.
-	sed -e "s|example.com|${VHOST_HOSTNAME}|g" -i "${WEBLATE_CONF}/default"/*
+	sed -e "s|example.com|${VHOST_HOSTNAME}|g" -i "${WEBLATE_CONF}/default"/* || die
+
+
+	# Copy generated settings file to settings.py if it doesn't exist and set a new secret.
+	if ! [ -e "${WEBLATE_CONF}/settings.py" ] ; then
+		cp "${WEBLATE_CONF}/default/settings.py" "${WEBLATE_CONF}/settings.py" || die
+		local mysecret="$(python -c 'from django.utils.crypto import get_random_string ; chars = '"'"'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'"'"' ; print(get_random_string(50, chars)); ' )"
+		[ -z "${mysecret}" ] && die "Could not generate SECRET_KEY!"
+		sed -e 's|^\(SECRET_KEY = \).*|\1'"'${mysecret}'"'|' -i "${WEBLATE_CONF}/settings.py" || die
+	fi
+
+	# Setup links to settings if they don't exist.
+	if ! [ -e "${WEBLATE_PYTHON_ROOT}/settings.py" ] ; then
+		printf -- "Configuration file '${WEBLATE_PYTHON_ROOT}/settings.py' doesn't exist.\nLinking to configuration at default location '${WEBLATE_CONF}/settings.py'.\n"
+		rm -f "${WEBLATE_PYTHON_ROOT}/settings.py" || die "Could not remove stale link to settings file at '${WEBLATE_PYTHON_ROOT}/settings.py'."
+		ln -s "../../conf/${WEBLATE_APPNAME}/settings.py" "${WEBLATE_PYTHON_ROOT}/settings.py" || die "Could not create linke to settings file at '${WEBLATE_PYTHON_ROOT}/settings.py'."
+	elif [ -h "${WEBLATE_PYTHON_ROOT}/settings.py" ] ; then
+		printf -- "Found exising configuration file link from '${WEBLATE_PYTHON_ROOT}/settings.py' to '$(readlink -e "${WEBLATE_PYTHON_ROOT}/settings.py")'.\n"
+	else
+		printf -- "Found exising configuration file at '${WEBLATE_PYTHON_ROOT}/settings.py'.\n"
+	fi
+
 
 	local f fn
 	for f in "${WEBLATE_CONF}/default"/* ; do
@@ -51,16 +72,6 @@ _webapp_config_weblate_install_hook() {
 		fi
 	done
 
-	# Setup links to settings if they don't exist.
-	if ! [ -e "${WEBLATE_PYTHON_ROOT}/settings.py" ] ; then
-		printf -- "Configuration file '${WEBLATE_PYTHON_ROOT}/settings.py' doesn't exist.\nLinking to configuration at default location '${WEBLATE_CONF}/settings.py'.\n"
-		rm -f "${WEBLATE_PYTHON_ROOT}/settings.py" || die "Could not remove stale link to settings file at '${WEBLATE_PYTHON_ROOT}/settings.py'."
-		ln -s "../../conf/${WEBLATE_APPNAME}/settings.py" "${WEBLATE_PYTHON_ROOT}/settings.py" || die "Could not create linke to settings file at '${WEBLATE_PYTHON_ROOT}/settings.py'."
-	elif [ -h "${WEBLATE_PYTHON_ROOT}/settings.py" ] ; then
-		printf -- "Found exising configuration file link from '${WEBLATE_PYTHON_ROOT}/settings.py' to '$(readlink -e "${WEBLATE_PYTHON_ROOT}/settings.py")'.\n"
-	else
-		printf -- "Found exising configuration file at '${WEBLATE_PYTHON_ROOT}/settings.py'.\n"
-	fi
 }
 
 _webapp_config_weblate_clean_hook() {

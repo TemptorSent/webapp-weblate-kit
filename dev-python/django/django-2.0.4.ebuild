@@ -1,7 +1,8 @@
+# Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy )
+PYTHON_COMPAT=( python3_{4,5,6} )
 PYTHON_REQ_USE='sqlite?,threads(+)'
 WEBAPP_NO_AUTO_INSTALL="yes"
 
@@ -24,9 +25,13 @@ LICENSE+=" Apache-2.0"
 LICENSE+=" MIT"
 SLOT="0"
 KEYWORDS="*"
-IUSE="doc sqlite test"
+IUSE="doc mysql postgresql sqlite test"
 
-RDEPEND=""
+RDEPEND="
+	postgresql? ( dev-python/psycopg:2[${PYTHON_USEDEP}] )
+	mysql? ( dev-python/mysqlclient[${PYTHON_USEDEP}] )
+"
+
 DEPEND="${RDEPEND}
 	dev-python/pytz[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
@@ -44,7 +49,7 @@ S="${WORKDIR}/${MY_P}"
 WEBAPP_MANUAL_SLOT="yes"
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-1.9-bashcomp.patch
+	"${FILESDIR}"/${PN}-2.0-bashcomp.patch
 )
 
 pkg_setup() {
@@ -90,9 +95,8 @@ src_install() {
 
 pkg_postinst() {
 	elog "Additional Backend support can be enabled via"
-	optfeature "MySQL backend support in python 2.7 only" dev-python/mysql-python
-	optfeature "MySQL backend support in python 2.7 - 3.4" dev-python/mysqlclient
-	optfeature "PostgreSQL backend support" dev-python/psycopg:2
+	use mysql || optfeature "MySQL backend support in python 2.7 - 3.4" dev-python/mysqlclient
+	use postgresql || optfeature "PostgreSQL backend support" dev-python/psycopg:2
 	echo ""
 	elog "Other features can be enhanced by"
 	optfeature "GEO Django" sci-libs/gdal[geos]
